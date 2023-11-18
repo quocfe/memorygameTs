@@ -10,25 +10,24 @@ window.addEventListener('DOMContentLoaded', () => {
 	let playGame: boolean = false;
 	let minutes: number = 0;
 	let seconds: number = 0;
+	let point: number = 0;
+
 	const timerContainer = document.querySelector('.timer') as HTMLElement;
 	const startBtn = document.querySelector('.game-start-btn') as HTMLElement;
 	const refreshBtn = document.querySelector('.refresh') as HTMLElement;
+	const pointTag = document.querySelector('.point') as HTMLElement;
 
 	const getData: CardImg[] = [
-		{ imgSrc: '/public/img/assura.jpg', name: 'asura', isMatched: false },
 		{ imgSrc: '/public/img/gear5.jpg', name: 'gear5', isMatched: false },
 		{ imgSrc: '/public/img/minato.jpg', name: 'minato', isMatched: false },
 		{ imgSrc: '/public/img/murom.jpg', name: 'murom', isMatched: false },
 		{ imgSrc: '/public/img/naruto.jpg', name: 'naruto', isMatched: false },
-		{ imgSrc: '/public/img/sasuke.jpg', name: 'sasuke', isMatched: false },
 		{ imgSrc: '/public/img/zoro.jpg', name: 'zoro', isMatched: false },
 		{ imgSrc: '/public/img/chopper.jpg', name: 'chopper', isMatched: false },
-		{ imgSrc: '/public/img/assura.jpg', name: 'asura', isMatched: false },
 		{ imgSrc: '/public/img/gear5.jpg', name: 'gear5', isMatched: false },
 		{ imgSrc: '/public/img/minato.jpg', name: 'minato', isMatched: false },
 		{ imgSrc: '/public/img/murom.jpg', name: 'murom', isMatched: false },
 		{ imgSrc: '/public/img/naruto.jpg', name: 'naruto', isMatched: false },
-		{ imgSrc: '/public/img/sasuke.jpg', name: 'sasuke', isMatched: false },
 		{ imgSrc: '/public/img/zoro.jpg', name: 'zoro', isMatched: false },
 		{ imgSrc: '/public/img/chopper.jpg', name: 'chopper', isMatched: false },
 	];
@@ -89,29 +88,40 @@ window.addEventListener('DOMContentLoaded', () => {
 	// Handle play
 	const handlePlay = () => {
 		const cardTags = document.querySelectorAll('.card');
-
 		cardTags.forEach((card) => {
 			card.addEventListener('click', (e) => {
 				handleFlipped(e);
 			});
 		});
 		function handleFlipped(e: any) {
-			console.log('click');
-
 			const cardContai = e.currentTarget;
-			const cardDataSet = cardContai.dataset.name;
 			cardContai.classList.add('toggleCard');
 			const toggleCards = document.querySelectorAll('.toggleCard');
 			if (toggleCards.length === 2) {
-				if (toggleCards[0].dataset.name === toggleCards[1].dataset.name) {
+				toggleCards[0].classList.remove('correct');
+				toggleCards[1].classList.remove('correct');
+				const card1 = toggleCards[0] as HTMLElement;
+				const card2 = toggleCards[1] as HTMLElement;
+				if (card1.dataset.name === card2.dataset.name) {
 					cardTags.forEach((card) => {
-						if (card.dataset.name === toggleCards[1].dataset.name) {
-							card.classList.add('flipped');
-							card.classList.remove('toggleCard');
+						const cardConvert = card as HTMLElement;
+						if (cardConvert.dataset.name === card1.dataset.name) {
+							cardConvert.classList.add('flipped');
+							cardConvert.classList.remove('toggleCard');
+							setTimeout(() => {
+								toggleCards[0].classList.add('correct');
+								toggleCards[1].classList.add('correct');
+								let newPoint = point++;
+								pointTag.innerHTML = newPoint.toString();
+							}, 400);
 						}
 					});
 				} else {
 					cardTags.forEach((card) => {
+						setTimeout(() => {
+							toggleCards[0].classList.add('wrong');
+							toggleCards[1].classList.add('wrong');
+						}, 1300);
 						setTimeout(() => {
 							toggleCards[0].classList.remove('wrong');
 							toggleCards[1].classList.remove('wrong');
@@ -124,13 +134,12 @@ window.addEventListener('DOMContentLoaded', () => {
 	};
 
 	// Start game
-
 	startBtn?.addEventListener('click', () => {
 		handlePlay();
 		if (startBtn.innerText == 'Star Game') {
 			playGame = true;
 			startBtn.innerText = 'pause';
-			startTimer();
+			// startTimer();
 		} else {
 			playGame = false;
 			startBtn.innerText = 'Star Game';
@@ -150,7 +159,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
         <div class="controls">
             <div class="star-list">
                 <span class="moves-container">
-									<span class="moves-selector">0</span>
+									<span class="moves-selector point">0</span>
 									Point
                 </span>
             </div>
